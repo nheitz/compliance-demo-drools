@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             targetNamespace="http://www.jboss.org/drools"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:g="http://www.jboss.org/drools/flow/gpd"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <process processType="Private" isExecutable="true" id="flow_risk-triggers" name="Compliance Traffic Lighting" tns:packageName="compliance.triggers" >
+
+    <extensionElements>
+     <tns:import name="com.sample.compliance.SampleCase" />
+     <tns:import name="com.sample.compliance.TrafficLight" />
+    </extensionElements>
+    <!-- nodes -->
+    <startEvent id="_1" name="StartProcess"  isInterrupting="true"/>
+    <endEvent id="_jbpm-unique-15" name="End" >
+        <terminateEventDefinition />
+    </endEvent>
+    <scriptTask id="_jbpm-unique-20" name="Green Light" >
+      <script>System.out.println("Action -&gt; GREEN");</script>
+    </scriptTask>
+    <scriptTask id="_jbpm-unique-21" name="Amber Light" >
+      <script>System.out.println("Action -&gt; AMBER");</script>
+    </scriptTask>
+    <scriptTask id="_jbpm-unique-22" name="Red Light" >
+      <script>System.out.println("Action -&gt; RED");</script>
+    </scriptTask>
+    <exclusiveGateway id="_jbpm-unique-23" name="Gateway" gatewayDirection="Diverging" />
+    <exclusiveGateway id="_jbpm-unique-24" name="Gateway" gatewayDirection="Converging" />
+
+    <!-- connections -->
+    <sequenceFlow id="_jbpm-unique-24-_jbpm-unique-15" sourceRef="_jbpm-unique-24" targetRef="_jbpm-unique-15" />
+    <sequenceFlow id="_jbpm-unique-23-_jbpm-unique-20" sourceRef="_jbpm-unique-23" targetRef="_jbpm-unique-20" name="constraint_GREEN" tns:priority="1" >
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.jboss.org/drools/rule" >SampleCase(  trafficLight ==  TrafficLight.GREEN )</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_jbpm-unique-23-_jbpm-unique-21" sourceRef="_jbpm-unique-23" targetRef="_jbpm-unique-21" name="constraint_AMBER" tns:priority="1" >
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.jboss.org/drools/rule" >SampleCase(  trafficLight ==  TrafficLight.AMBER )</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_jbpm-unique-23-_jbpm-unique-22" sourceRef="_jbpm-unique-23" targetRef="_jbpm-unique-22" name="constraint_RED" tns:priority="1" >
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.jboss.org/drools/rule" >SampleCase(  trafficLight ==  TrafficLight.RED )</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_1-_jbpm-unique-23" sourceRef="_1" targetRef="_jbpm-unique-23" />
+    <sequenceFlow id="_jbpm-unique-22-_jbpm-unique-24" sourceRef="_jbpm-unique-22" targetRef="_jbpm-unique-24" />
+    <sequenceFlow id="_jbpm-unique-21-_jbpm-unique-24" sourceRef="_jbpm-unique-21" targetRef="_jbpm-unique-24" />
+    <sequenceFlow id="_jbpm-unique-20-_jbpm-unique-24" sourceRef="_jbpm-unique-20" targetRef="_jbpm-unique-24" />
+
+  </process>
+
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="flow_risk-triggers" >
+      <bpmndi:BPMNShape bpmnElement="_1" >
+        <dc:Bounds x="16" y="96" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-15" >
+        <dc:Bounds x="387" y="96" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-20" >
+        <dc:Bounds x="177" y="16" width="97" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-21" >
+        <dc:Bounds x="177" y="96" width="97" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-22" >
+        <dc:Bounds x="177" y="176" width="97" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-23" >
+        <dc:Bounds x="96" y="96" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-24" >
+        <dc:Bounds x="306" y="96" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-24-_jbpm-unique-15" >
+        <di:waypoint x="330" y="120" />
+        <di:waypoint x="411" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-23-_jbpm-unique-20" >
+        <di:waypoint x="120" y="120" />
+        <di:waypoint x="225" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-23-_jbpm-unique-21" >
+        <di:waypoint x="120" y="120" />
+        <di:waypoint x="225" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-23-_jbpm-unique-22" >
+        <di:waypoint x="120" y="120" />
+        <di:waypoint x="225" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_1-_jbpm-unique-23" >
+        <di:waypoint x="40" y="120" />
+        <di:waypoint x="120" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-22-_jbpm-unique-24" >
+        <di:waypoint x="225" y="200" />
+        <di:waypoint x="330" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-21-_jbpm-unique-24" >
+        <di:waypoint x="225" y="120" />
+        <di:waypoint x="330" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-20-_jbpm-unique-24" >
+        <di:waypoint x="225" y="40" />
+        <di:waypoint x="330" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>

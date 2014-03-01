@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             targetNamespace="http://www.jboss.org/drools"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:g="http://www.jboss.org/drools/flow/gpd"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <process processType="Private" isExecutable="true" id="flow_risk-scoring" name="Compliance Scoring" tns:packageName="compliance.scoring" >
+
+    <!-- nodes -->
+    <startEvent id="_1" name="StartProcess"  isInterrupting="true"/>
+    <endEvent id="_jbpm-unique-14" name="End" >
+        <terminateEventDefinition />
+    </endEvent>
+    <businessRuleTask id="_jbpm-unique-18" name="Risk Rating" g:ruleFlowGroup="scoring-raw" >
+      <ioSpecification>
+        <inputSet>
+        </inputSet>
+        <outputSet>
+        </outputSet>
+      </ioSpecification>
+    </businessRuleTask>
+    <businessRuleTask id="_jbpm-unique-0" name="Traffic Lighting" g:ruleFlowGroup="scoring-trafficlight" >
+      <ioSpecification>
+        <inputSet>
+        </inputSet>
+        <outputSet>
+        </outputSet>
+      </ioSpecification>
+    </businessRuleTask>
+
+    <!-- connections -->
+    <sequenceFlow id="_jbpm-unique-0-_jbpm-unique-14" sourceRef="_jbpm-unique-0" targetRef="_jbpm-unique-14" />
+    <sequenceFlow id="_1-_jbpm-unique-18" sourceRef="_1" targetRef="_jbpm-unique-18" />
+    <sequenceFlow id="_jbpm-unique-18-_jbpm-unique-0" sourceRef="_jbpm-unique-18" targetRef="_jbpm-unique-0" />
+
+  </process>
+
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="flow_risk-scoring" >
+      <bpmndi:BPMNShape bpmnElement="_1" >
+        <dc:Bounds x="16" y="16" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-14" >
+        <dc:Bounds x="382" y="16" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-18" >
+        <dc:Bounds x="96" y="16" width="123" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-0" >
+        <dc:Bounds x="251" y="16" width="99" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-0-_jbpm-unique-14" >
+        <di:waypoint x="300" y="40" />
+        <di:waypoint x="406" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_1-_jbpm-unique-18" >
+        <di:waypoint x="40" y="40" />
+        <di:waypoint x="157" y="40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-18-_jbpm-unique-0" >
+        <di:waypoint x="157" y="40" />
+        <di:waypoint x="300" y="40" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>
