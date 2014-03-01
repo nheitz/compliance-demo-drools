@@ -50,6 +50,11 @@
             <artifactId>logback-classic</artifactId>
             <version>1.0.9</version>
           </dependency>
+          <dependency>
+            <groupId>com.recordsure</groupId>
+            <artifactId>compliance-rules-domain</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+          </dependency>
         </dependencies>
       </plugin>
     </plugins>

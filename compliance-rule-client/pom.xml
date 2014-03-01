@@ -31,6 +31,13 @@
     </dependency>
 
     <dependency>
+      <groupId>com.recordsure</groupId>
+      <artifactId>compliance-rules-domain</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-bpmn2</artifactId>
       <version>${drools.version}</version>
