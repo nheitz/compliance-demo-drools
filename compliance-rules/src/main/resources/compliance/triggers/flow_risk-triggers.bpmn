@@ -15,8 +15,7 @@
   <process processType="Private" isExecutable="true" id="flow_risk-triggers" name="Compliance Traffic Lighting" tns:packageName="compliance.triggers" >
 
     <extensionElements>
-     <tns:import name="com.sample.compliance.SampleCase" />
-     <tns:import name="com.sample.compliance.TrafficLight" />
+     <tns:import name="com.sample.compliance.*" />
     </extensionElements>
     <!-- nodes -->
     <startEvent id="_1" name="StartProcess"  isInterrupting="true"/>
