@@ -5,13 +5,14 @@
     <encoder>
       <!-- %l lowers performance -->
       <!--<pattern>%d [%t] %-5p %l%n  %m%n</pattern>-->
-      <pattern>%d [%t] %-5p %m%n</pattern>
+      <pattern>%date{ISO8601} [%t] %c{5} %-5p %m%n</pattern>
     </encoder>
   </appender>
 
 <!--   <logger name="org.drools" level="trace"/> -->
+  <logger name="com.sample.compliance" level="debug"/>
 
-  <root level="debug">
+  <root level="info">
     <appender-ref ref="consoleAppender" />
   </root>
 

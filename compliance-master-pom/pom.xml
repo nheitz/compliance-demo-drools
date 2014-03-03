@@ -48,6 +48,7 @@
         <groupId>org.kie</groupId>
         <artifactId>kie-ci</artifactId>
         <version>${drools.version}</version>
+        <scope>runtime</scope>
       </dependency>
 
       <!-- Needed for logging -->
@@ -67,6 +68,7 @@
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
         <version>1.0.9</version>
+        <scope>runtime</scope>
       </dependency>
 
       <dependency>
@@ -114,11 +116,6 @@
               <groupId>ch.qos.logback</groupId>
               <artifactId>logback-classic</artifactId>
               <version>1.0.9</version>
-            </dependency>
-            <dependency>
-              <groupId>com.recordsure</groupId>
-              <artifactId>compliance-rules-domain</artifactId>
-              <version>${project.version}</version>
             </dependency>
           </dependencies>
         </plugin>

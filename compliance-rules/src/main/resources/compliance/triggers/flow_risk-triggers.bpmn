@@ -23,13 +23,13 @@
         <terminateEventDefinition />
     </endEvent>
     <scriptTask id="_jbpm-unique-20" name="Green Light" >
-      <script>System.out.println("Action -&gt; GREEN");</script>
+      <script>System.out.println("DummyTrigger: Action -&gt; GREEN");</script>
     </scriptTask>
     <scriptTask id="_jbpm-unique-21" name="Amber Light" >
-      <script>System.out.println("Action -&gt; AMBER");</script>
+      <script>System.out.println("DummyTrigger: Action -&gt; AMBER");</script>
     </scriptTask>
     <scriptTask id="_jbpm-unique-22" name="Red Light" >
-      <script>System.out.println("Action -&gt; RED");</script>
+      <script>System.out.println("DummyTrigger: Action -&gt; RED");</script>
     </scriptTask>
     <exclusiveGateway id="_jbpm-unique-23" name="Gateway" gatewayDirection="Diverging" />
     <exclusiveGateway id="_jbpm-unique-24" name="Gateway" gatewayDirection="Converging" />

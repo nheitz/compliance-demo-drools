@@ -11,18 +11,6 @@
   <artifactId>compliance-rules</artifactId>
   <packaging>kjar</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.drools</groupId>
-      <artifactId>drools-compiler</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.recordsure</groupId>
-      <artifactId>compliance-rules-domain</artifactId>
-    </dependency>
-
-  </dependencies>
-
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -30,6 +18,13 @@
         <groupId>org.kie</groupId>
         <artifactId>kie-maven-plugin</artifactId>
         <extensions>true</extensions>
+        <dependencies>
+          <dependency>
+            <groupId>com.recordsure</groupId>
+            <artifactId>compliance-rules-domain</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
     <pluginManagement>

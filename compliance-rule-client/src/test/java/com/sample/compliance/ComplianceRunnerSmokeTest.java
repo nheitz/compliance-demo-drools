@@ -3,16 +3,26 @@ package com.sample.compliance;
 import static org.fest.assertions.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.api.KieServices;
 import org.kie.api.builder.ReleaseId;
+import org.kie.api.event.rule.AfterMatchFiredEvent;
+import org.kie.api.event.rule.AgendaEventListener;
+import org.kie.api.event.rule.AgendaGroupPoppedEvent;
+import org.kie.api.event.rule.AgendaGroupPushedEvent;
+import org.kie.api.event.rule.BeforeMatchFiredEvent;
 import org.kie.api.event.rule.DebugAgendaEventListener;
+import org.kie.api.event.rule.MatchCancelledEvent;
+import org.kie.api.event.rule.MatchCreatedEvent;
+import org.kie.api.event.rule.RuleFlowGroupActivatedEvent;
+import org.kie.api.event.rule.RuleFlowGroupDeactivatedEvent;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
@@ -20,12 +30,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ComplianceRunnerSmokeTest {
-    private static final Logger  logger = LoggerFactory.getLogger(ComplianceRunnerSmokeTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(ComplianceRunnerSmokeTest.class);
 
-    private static ReleaseId     releaseId;
-    private static KieContainer  kContainer;
-    private static KieSession    kSession;
-    private static Stack<String> executionStack;
+    private static ReleaseId    releaseId;
+    private static KieContainer kContainer;
+    private static KieSession   kSession;
+    private static List<String> executionTrace;
 
     @BeforeClass
     public static void setUp() {
@@ -33,9 +43,10 @@ public class ComplianceRunnerSmokeTest {
         releaseId = ks.newReleaseId("com.recordsure", "compliance-rules", "0.0.1-SNAPSHOT");
         kContainer = ks.newKieContainer(releaseId);
         kSession = kContainer.newKieSession("recordsure-compliance-session");
-        kSession.addEventListener(new DebugAgendaEventListener());
-        executionStack = new Stack<String>();
-        kSession.insert(executionStack);
+        executionTrace = new ArrayList<>();
+        // kSession.addEventListener(new DebugAgendaEventListener());
+        kSession.addEventListener(new StreamlinedAgendaListener(executionTrace));
+        kSession.insert(executionTrace);
     }
 
     @AfterClass
@@ -54,7 +65,7 @@ public class ComplianceRunnerSmokeTest {
         kSession.fireAllRules();
 
         kSession.delete(fHandle);
-        printStack(executionStack, true);
+        printTrace(executionTrace, true);
         logger.debug(String.format("Result after scoring: %s", sampleCase));
 
         assertThat(sampleCase.getTrafficLight()).isEqualTo(TrafficLight.AMBER);
@@ -71,7 +82,7 @@ public class ComplianceRunnerSmokeTest {
         kSession.fireAllRules();
 
         kSession.delete(fHandle);
-        printStack(executionStack, true);
+        printTrace(executionTrace, true);
         logger.debug(String.format("Result after scoring: %s", sampleCase));
         assertThat(sampleCase.getTrafficLight()).isEqualTo(TrafficLight.GREEN);
     }
@@ -87,7 +98,7 @@ public class ComplianceRunnerSmokeTest {
         kSession.fireAllRules();
 
         kSession.delete(fHandle);
-        printStack(executionStack, true);
+        printTrace(executionTrace, true);
         logger.debug(String.format("Result after scoring: %s", sampleCase));
         assertThat(sampleCase.getTrafficLight()).isEqualTo(TrafficLight.RED);
     }
@@ -103,12 +114,64 @@ public class ComplianceRunnerSmokeTest {
         return result;
     }
 
-    private static void printStack(Stack<String> executionStack, boolean andClear) {
-        while (!executionStack.isEmpty()) {
-            logger.debug(executionStack.pop());
+    private static void printTrace(List<String> executionTrace, boolean andClear) {
+        for (String traceElement : executionTrace) {
+            logger.debug(traceElement);
         }
         if (andClear)
-            executionStack.clear();
+            executionTrace.clear();
+    }
+
+    private static class StreamlinedAgendaListener implements AgendaEventListener {
+
+        private final List<String> executionTrace;
+
+        public StreamlinedAgendaListener(List<String> executionTrace) {
+            this.executionTrace = executionTrace;
+
+        }
+
+        @Override
+        public void matchCreated(MatchCreatedEvent event) {
+        }
+
+        @Override
+        public void matchCancelled(MatchCancelledEvent event) {
+        }
+
+        @Override
+        public void beforeMatchFired(BeforeMatchFiredEvent event) {
+            executionTrace.add(String.format("Matching: rule [id: %s]", event.getMatch().getRule().getId()));
+        }
+
+        @Override
+        public void afterMatchFired(AfterMatchFiredEvent event) {
+        }
+
+        @Override
+        public void agendaGroupPopped(AgendaGroupPoppedEvent event) {
+        }
+
+        @Override
+        public void agendaGroupPushed(AgendaGroupPushedEvent event) {
+        }
+
+        @Override
+        public void beforeRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
+        }
+
+        @Override
+        public void afterRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
+        }
+
+        @Override
+        public void beforeRuleFlowGroupDeactivated(RuleFlowGroupDeactivatedEvent event) {
+        }
+
+        @Override
+        public void afterRuleFlowGroupDeactivated(RuleFlowGroupDeactivatedEvent event) {
+        }
+
     }
 
     // private static KieSession buildKieSession() throws Exception {

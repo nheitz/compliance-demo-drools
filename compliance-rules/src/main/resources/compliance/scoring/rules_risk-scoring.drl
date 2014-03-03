@@ -7,76 +7,80 @@ import java.math.BigDecimal;
 global Map<String, BigDecimal> riskRatingMap;
 
 rule "lowAgeCheck"
+    @ID("1")
 ruleflow-group "scoring-raw"
     when
-        $execStack : Stack ( )
+        $execTrace : List ( )
         $case : SampleCase ( state == 1, age > 15 && <= 25 )
     then
         BigDecimal _preRate = $case.getRiskRating();
         modify($case) {
             setRiskRating($case.boostRatingByPercent((BigDecimal)riskRatingMap.get("LOW_AGE_SCORE")));
         }
-        $execStack.push(String.format("Completed execution on rule '%s'. [pre: %s, post: %s]",
-            "lowAgeCheck", _preRate, $case.getRiskRating()));
+        $execTrace.add(String.format("rule [id: %s, riskRating: [pre: %s, post: %s]]"
+            , drools.getRule().getId(), _preRate, $case.getRiskRating()));
 end
 
 rule "mediumAgeCheck"
 ruleflow-group "scoring-raw"
     when
-        $execStack : Stack ( )
+        $execTrace : List ( )
         $case : SampleCase ( state == 1, age > 25 && <= 90 )
     then
         BigDecimal _preRate = $case.getRiskRating();
         modify($case) {
             setRiskRating($case.boostRatingByPercent((BigDecimal)riskRatingMap.get("MID_AGE_SCORE")));
         }
-        $execStack.push(String.format("Completed execution on rule '%s'. [pre: %s, post: %s]",
-            "mediumAgeCheck", _preRate, $case.getRiskRating()));
+        $execTrace.add(String.format("rule [id: %s, riskRating: [pre: %s, post: %s]]"
+            , drools.getRule().getId(), _preRate, $case.getRiskRating()));
 end
 
 rule "highAgeCheck"
 ruleflow-group "scoring-raw"
     when
-        $execStack : Stack ( )
+        $execTrace : List ( )
         $case : SampleCase ( age > 90 )
     then
         BigDecimal _preRate = $case.getRiskRating();
         modify($case) {
             setRiskRating($case.boostRatingByPercent((BigDecimal)riskRatingMap.get("HIGH_AGE_SCORE")));
         }
-        $execStack.push(String.format("Completed execution on rule '%s'. [pre: %s, post: %s]",
-            "highAgeCheck", _preRate, $case.getRiskRating()));
+        $execTrace.add(String.format("rule [id: %s, riskRating: [pre: %s, post: %s]]"
+            , drools.getRule().getId(), _preRate, $case.getRiskRating()));
 end
 
 rule "greenTrafficLight"
 ruleflow-group "scoring-trafficlight"
     when
-        $execStack : Stack ( )
+        $execTrace : List ( )
         $case : SampleCase ( riskRating < .4 )
     then
         $case.setTrafficLight(TrafficLight.GREEN);
         update($case);
-        $execStack.push(String.format("Completed execution on rule '%s'. Case flagged %s", "greenTrafficLight", $case.getTrafficLight()));
+        $execTrace.add(String.format("rule [id: %s, trafficList: %s]"
+            , drools.getRule().getId(), $case.getTrafficLight()));
 end
 
 rule "amberTrafficLight"
 ruleflow-group "scoring-trafficlight"
     when
-        $execStack : Stack ( )
+        $execTrace : List ( )
         $case : SampleCase ( riskRating >= .4 && < .8 )
     then
         $case.setTrafficLight(TrafficLight.AMBER);
         update($case);
-        $execStack.push(String.format("Completed execution on rule '%s'. Case flagged %s", "amberTrafficLight", $case.getTrafficLight()));
+        $execTrace.add(String.format("rule [id: %s, trafficList: %s]"
+            , drools.getRule().getId(), $case.getTrafficLight()));
 end
 
 rule "redTrafficLight"
 ruleflow-group "scoring-trafficlight"
     when
-        $execStack : Stack ( )
+        $execTrace : List ( )
         $case : SampleCase ( riskRating >= .8 )
     then
         $case.setTrafficLight(TrafficLight.RED);
         update($case);
-        $execStack.push(String.format("Completed execution on rule '%s'. Case flagged %s", "redTrafficLight", $case.getTrafficLight()));
+        $execTrace.add(String.format("rule [id: %s, trafficList: %s]"
+            , drools.getRule().getId(), $case.getTrafficLight()));
 end
