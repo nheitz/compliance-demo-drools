@@ -115,9 +115,11 @@ public class ComplianceRunnerSmokeTest {
     }
 
     private static void printTrace(List<String> executionTrace, boolean andClear) {
+        logger.debug("----------------------------");
         for (String traceElement : executionTrace) {
             logger.debug(traceElement);
         }
+        logger.debug("----------------------------");
         if (andClear)
             executionTrace.clear();
     }
