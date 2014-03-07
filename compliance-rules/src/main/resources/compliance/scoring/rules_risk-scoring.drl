@@ -4,14 +4,23 @@ import com.sample.compliance.*;
 import java.util.*;
 import java.math.BigDecimal;
 
-global Map<String, BigDecimal> riskRatingMap;
+global Map<String, BigDecimal> riskRatingMap; 
 
-rule "lowAgeCheck"
-    //@ID("1")
+rule "baseRule"
 ruleflow-group "scoring-raw"
     when
         $execTrace : List ( )
-        $case : SampleCase ( state == 1, age > 15 && <= 25 )
+        $case : SampleCase ( $caseId : id )
+    then
+        ///no consequence to base rule
+end
+
+rule "lowAgeCheck" extends "baseRule"
+    //@ID("1")
+ruleflow-group "scoring-raw"
+    when
+        SampleCase ( id == $caseId, state == 1, age > 15 && <= 25 )
+
     then
         BigDecimal _preRate = $case.getRiskRating();
         modify($case) {
@@ -21,11 +30,23 @@ ruleflow-group "scoring-raw"
             , drools.getRule().getId(), _preRate, $case.getRiskRating()));
 end
 
-rule "mediumAgeCheck"
+rule "hasClaims_lowAgeCheck" extends "lowAgeCheck"
 ruleflow-group "scoring-raw"
     when
-        $execTrace : List ( )
-        $case : SampleCase ( state == 1, age > 25 && <= 90 )
+        SampleCase ( id == $caseId, looseAttributes["hasClaims"] == "true" )
+    then
+        BigDecimal _preRate = $case.getRiskRating();
+        modify($case) {
+            setRiskRating($case.boostRatingByPercent((BigDecimal)riskRatingMap.get("HAS_PRIOR_CLAIMS_LOW_AGE")));
+        }
+        $execTrace.add(String.format("rule [id: %s, riskRating: [pre: %s, post: %s]]"
+            , drools.getRule().getId(), _preRate, $case.getRiskRating()));
+end
+
+rule "mediumAgeCheck" extends "baseRule"
+ruleflow-group "scoring-raw"
+    when
+        SampleCase ( id == $caseId, state == 1, age > 25 && <= 90 )
     then
         BigDecimal _preRate = $case.getRiskRating();
         modify($case) {
@@ -33,6 +54,33 @@ ruleflow-group "scoring-raw"
         }
         $execTrace.add(String.format("rule [id: %s, riskRating: [pre: %s, post: %s]]"
             , drools.getRule().getId(), _preRate, $case.getRiskRating()));
+end
+
+rule "hasClaims_mediumAgeCheck" extends "mediumAgeCheck"
+ruleflow-group "scoring-raw"
+    when
+        SampleCase ( id == $caseId, looseAttributes["hasClaims"] == true )
+    then
+        BigDecimal _preRate = $case.getRiskRating();
+        modify($case) {
+            setRiskRating($case.boostRatingByPercent((BigDecimal)riskRatingMap.get("HAS_PRIOR_CLAIMS_MID_AGE")));
+        }
+        $execTrace.add(String.format("rule [id: %s, riskRating: [pre: %s, post: %s]]"
+            , drools.getRule().getId(), _preRate, $case.getRiskRating()));
+end
+
+rule "ownsMachete_mediumAgeCheck" extends "mediumAgeCheck"
+salience 100
+ruleflow-group "scoring-raw"
+    when
+        SampleCase ( id == $caseId, looseAttributes["ownsMachete"] == true )
+    then
+        BigDecimal _preRate = $case.getRiskRating();
+        
+        $case.setRiskRating(new BigDecimal("1"));
+        retract($case);
+        $execTrace.add(String.format("CODE RED: rule [id: %s, riskRating: [rating pre-termination: %s]]"
+            , drools.getRule().getId(), _preRate));
 end
 
 rule "highAgeCheck"

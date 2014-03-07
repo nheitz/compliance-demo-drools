@@ -15,6 +15,7 @@
   <process processType="Private" isExecutable="true" id="flow_risk-triggers" name="Compliance Traffic Lighting" tns:packageName="compliance.triggers" >
 
     <extensionElements>
+     <tns:import name="java.util.List" />
      <tns:import name="com.sample.compliance.*" />
     </extensionElements>
     <!-- nodes -->
@@ -23,21 +24,26 @@
         <terminateEventDefinition />
     </endEvent>
     <scriptTask id="_jbpm-unique-20" name="Green Light" >
-      <script>System.out.println("DummyTrigger: Action -&gt; GREEN");</script>
+      <script>System.out.println("EventTrigger: GREEN");</script>
     </scriptTask>
     <scriptTask id="_jbpm-unique-21" name="Amber Light" >
-      <script>System.out.println("DummyTrigger: Action -&gt; AMBER");</script>
+      <script>System.out.println("EventTrigger: AMBER");</script>
     </scriptTask>
     <scriptTask id="_jbpm-unique-22" name="Red Light" >
-      <script>System.out.println("DummyTrigger: Action -&gt; RED");</script>
+      <script>System.out.println("EventTrigger: RED");</script>
     </scriptTask>
     <exclusiveGateway id="_jbpm-unique-23" name="Gateway" gatewayDirection="Diverging" />
     <exclusiveGateway id="_jbpm-unique-24" name="Gateway" gatewayDirection="Converging" />
+    <scriptTask id="_jbpm-unique-0" name="No Light" >
+      <script>System.out.println("EventTrigger: NONE  (Case may have been retracted due to fast failure during rule execution.)");</script>
+    </scriptTask>
 
     <!-- connections -->
     <sequenceFlow id="_jbpm-unique-24-_jbpm-unique-15" sourceRef="_jbpm-unique-24" targetRef="_jbpm-unique-15" />
     <sequenceFlow id="_jbpm-unique-23-_jbpm-unique-20" sourceRef="_jbpm-unique-23" targetRef="_jbpm-unique-20" name="constraint_GREEN" tns:priority="1" >
-      <conditionExpression xsi:type="tFormalExpression" language="http://www.jboss.org/drools/rule" >SampleCase(  trafficLight ==  TrafficLight.GREEN )</conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.jboss.org/drools/rule" >SampleCase(  trafficLight ==  TrafficLight.GREEN )
+$execTrace : List ( )
+</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="_jbpm-unique-23-_jbpm-unique-21" sourceRef="_jbpm-unique-23" targetRef="_jbpm-unique-21" name="constraint_AMBER" tns:priority="1" >
       <conditionExpression xsi:type="tFormalExpression" language="http://www.jboss.org/drools/rule" >SampleCase(  trafficLight ==  TrafficLight.AMBER )</conditionExpression>
@@ -49,16 +55,20 @@
     <sequenceFlow id="_jbpm-unique-22-_jbpm-unique-24" sourceRef="_jbpm-unique-22" targetRef="_jbpm-unique-24" />
     <sequenceFlow id="_jbpm-unique-21-_jbpm-unique-24" sourceRef="_jbpm-unique-21" targetRef="_jbpm-unique-24" />
     <sequenceFlow id="_jbpm-unique-20-_jbpm-unique-24" sourceRef="_jbpm-unique-20" targetRef="_jbpm-unique-24" />
+    <sequenceFlow id="_jbpm-unique-0-_jbpm-unique-24" sourceRef="_jbpm-unique-0" targetRef="_jbpm-unique-24" />
+    <sequenceFlow id="_jbpm-unique-23-_jbpm-unique-0" sourceRef="_jbpm-unique-23" targetRef="_jbpm-unique-0" name="constraint_NOLIGHT" tns:priority="1" >
+      <conditionExpression xsi:type="tFormalExpression" language="http://www.jboss.org/drools/rule" >not SampleCase ( )</conditionExpression>
+    </sequenceFlow>
 
   </process>
 
   <bpmndi:BPMNDiagram>
     <bpmndi:BPMNPlane bpmnElement="flow_risk-triggers" >
       <bpmndi:BPMNShape bpmnElement="_1" >
-        <dc:Bounds x="16" y="96" width="48" height="48" />
+        <dc:Bounds x="16" y="136" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_jbpm-unique-15" >
-        <dc:Bounds x="387" y="96" width="48" height="48" />
+        <dc:Bounds x="387" y="136" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_jbpm-unique-20" >
         <dc:Bounds x="177" y="16" width="97" height="48" />
@@ -70,42 +80,53 @@
         <dc:Bounds x="177" y="176" width="97" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_jbpm-unique-23" >
-        <dc:Bounds x="96" y="96" width="48" height="48" />
+        <dc:Bounds x="96" y="136" width="48" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_jbpm-unique-24" >
-        <dc:Bounds x="306" y="96" width="48" height="48" />
+        <dc:Bounds x="306" y="136" width="48" height="48" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_jbpm-unique-0" >
+        <dc:Bounds x="177" y="256" width="97" height="48" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-24-_jbpm-unique-15" >
-        <di:waypoint x="330" y="120" />
-        <di:waypoint x="411" y="120" />
+        <di:waypoint x="330" y="160" />
+        <di:waypoint x="411" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-23-_jbpm-unique-20" >
-        <di:waypoint x="120" y="120" />
+        <di:waypoint x="120" y="160" />
         <di:waypoint x="225" y="40" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-23-_jbpm-unique-21" >
-        <di:waypoint x="120" y="120" />
+        <di:waypoint x="120" y="160" />
         <di:waypoint x="225" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-23-_jbpm-unique-22" >
-        <di:waypoint x="120" y="120" />
+        <di:waypoint x="120" y="160" />
         <di:waypoint x="225" y="200" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_1-_jbpm-unique-23" >
-        <di:waypoint x="40" y="120" />
-        <di:waypoint x="120" y="120" />
+        <di:waypoint x="40" y="160" />
+        <di:waypoint x="120" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-22-_jbpm-unique-24" >
         <di:waypoint x="225" y="200" />
-        <di:waypoint x="330" y="120" />
+        <di:waypoint x="330" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-21-_jbpm-unique-24" >
         <di:waypoint x="225" y="120" />
-        <di:waypoint x="330" y="120" />
+        <di:waypoint x="330" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-20-_jbpm-unique-24" >
         <di:waypoint x="225" y="40" />
-        <di:waypoint x="330" y="120" />
+        <di:waypoint x="330" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-0-_jbpm-unique-24" >
+        <di:waypoint x="225" y="280" />
+        <di:waypoint x="330" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_jbpm-unique-23-_jbpm-unique-0" >
+        <di:waypoint x="120" y="160" />
+        <di:waypoint x="225" y="280" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

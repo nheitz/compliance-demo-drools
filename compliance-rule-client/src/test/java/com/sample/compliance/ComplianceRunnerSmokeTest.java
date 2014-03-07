@@ -56,7 +56,8 @@ public class ComplianceRunnerSmokeTest {
 
     @Test
     public void lowAgePersonShould_TrafficLightToAmber() throws Exception {
-        SampleCase sampleCase = new SampleCase(20, 1, RiskAversion.LOW, BigDecimal.ZERO);
+        SampleCase sampleCase = new SampleCase(1, 20, 1, RiskAversion.LOW, BigDecimal.ZERO);
+        sampleCase.getLooseAttributes().put("hasClaims", "true");
 
         kSession.setGlobal("riskRatingMap", setUpRatings());
         FactHandle fHandle = kSession.insert(sampleCase);
@@ -65,15 +66,15 @@ public class ComplianceRunnerSmokeTest {
         kSession.fireAllRules();
 
         kSession.delete(fHandle);
-        printTrace(executionTrace, true);
-        logger.debug(String.format("Result after scoring: %s", sampleCase));
+        printTrace(String.format("SCORE RESULT: %s", sampleCase), executionTrace, true);
 
         assertThat(sampleCase.getTrafficLight()).isEqualTo(TrafficLight.AMBER);
     }
 
     @Test
-    public void midAgePersonShould_TrafficLightToGreen() throws Exception {
-        SampleCase sampleCase = new SampleCase(45, 1, RiskAversion.LOW, BigDecimal.ZERO);
+    public void midAgePersonWithClaimsShould_TrafficLightToGreen() throws Exception {
+        SampleCase sampleCase = new SampleCase(2, 45, 1, RiskAversion.LOW, BigDecimal.ZERO);
+        sampleCase.getLooseAttributes().put("hasClaims", "true");
 
         kSession.setGlobal("riskRatingMap", setUpRatings());
         FactHandle fHandle = kSession.insert(sampleCase);
@@ -82,14 +83,16 @@ public class ComplianceRunnerSmokeTest {
         kSession.fireAllRules();
 
         kSession.delete(fHandle);
-        printTrace(executionTrace, true);
-        logger.debug(String.format("Result after scoring: %s", sampleCase));
+        printTrace(String.format("SCORE RESULT: %s", sampleCase), executionTrace, true);
+
         assertThat(sampleCase.getTrafficLight()).isEqualTo(TrafficLight.GREEN);
     }
 
     @Test
-    public void highAgePersonShould_TrafficLightToRed() throws Exception {
-        SampleCase sampleCase = new SampleCase(91, 1, RiskAversion.LOW, BigDecimal.ZERO);
+    public void midAgePersonWithMacheteShould_ExitFast() throws Exception {
+        SampleCase sampleCase = new SampleCase(2, 45, 1, RiskAversion.LOW, BigDecimal.ZERO);
+        sampleCase.getLooseAttributes().put("hasClaims", "false");
+        sampleCase.getLooseAttributes().put("ownsMachete", "true");
 
         kSession.setGlobal("riskRatingMap", setUpRatings());
         FactHandle fHandle = kSession.insert(sampleCase);
@@ -98,9 +101,25 @@ public class ComplianceRunnerSmokeTest {
         kSession.fireAllRules();
 
         kSession.delete(fHandle);
-        printTrace(executionTrace, true);
-        logger.debug(String.format("Result after scoring: %s", sampleCase));
-        assertThat(sampleCase.getTrafficLight()).isEqualTo(TrafficLight.RED);
+        printTrace(String.format("SCORE RESULT: %s", sampleCase), executionTrace, true);
+
+        assertThat(sampleCase.getTrafficLight()).isNull();;
+    }
+
+    @Test
+    public void highAgePersonShould_TrafficLightToRed() throws Exception {
+        SampleCase sampleCase = new SampleCase(3, 91, 1, RiskAversion.LOW, BigDecimal.ZERO);
+        sampleCase.getLooseAttributes().put("hasClaims", "true");
+
+        kSession.setGlobal("riskRatingMap", setUpRatings());
+        FactHandle fHandle = kSession.insert(sampleCase);
+
+        kSession.startProcess("flow_compliance-full");
+        kSession.fireAllRules();
+
+        kSession.delete(fHandle);
+        printTrace(String.format("SCORE RESULT: %s", sampleCase), executionTrace, true);
+
     }
 
     private static Map<String, BigDecimal> setUpRatings() {
@@ -109,17 +128,23 @@ public class ComplianceRunnerSmokeTest {
                 put("LOW_AGE_SCORE", new BigDecimal("50"));
                 put("MID_AGE_SCORE", new BigDecimal("20"));
                 put("HIGH_AGE_SCORE", new BigDecimal("100"));
+                put("HAS_PRIOR_CLAIMS_LOW_AGE", new BigDecimal("1"));
+                put("HAS_PRIOR_CLAIMS_MID_AGE", new BigDecimal(".5"));
             }
         };
         return result;
     }
 
-    private static void printTrace(List<String> executionTrace, boolean andClear) {
-        logger.debug("----------------------------");
+    private static void printTrace(String result, List<String> executionTrace, boolean andClear) {
+        StringBuffer buff = new StringBuffer();
+        buff.append("\n").append(result);
+        buff.append("\n----------------------------");
         for (String traceElement : executionTrace) {
-            logger.debug(traceElement);
+            buff.append("\n\t").append(traceElement);
         }
-        logger.debug("----------------------------");
+        buff.append("\n----------------------------");
+
+        logger.debug(buff.toString());
         if (andClear)
             executionTrace.clear();
     }
@@ -143,7 +168,7 @@ public class ComplianceRunnerSmokeTest {
 
         @Override
         public void beforeMatchFired(BeforeMatchFiredEvent event) {
-            executionTrace.add(String.format("Matching: rule [id: %s]", event.getMatch().getRule().getId()));
+            executionTrace.add(String.format("==> Matching: rule [id: %s]", event.getMatch().getRule().getId()));
         }
 
         @Override
