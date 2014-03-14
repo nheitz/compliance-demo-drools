@@ -8,21 +8,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.drools.compiler.lang.descr.PackageDescr;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.api.KieServices;
+import org.kie.api.builder.KieFileSystem;
 import org.kie.api.builder.ReleaseId;
+import org.kie.api.definition.KieDescr;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
 import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.event.rule.AgendaGroupPoppedEvent;
 import org.kie.api.event.rule.AgendaGroupPushedEvent;
 import org.kie.api.event.rule.BeforeMatchFiredEvent;
-import org.kie.api.event.rule.DebugAgendaEventListener;
 import org.kie.api.event.rule.MatchCancelledEvent;
 import org.kie.api.event.rule.MatchCreatedEvent;
 import org.kie.api.event.rule.RuleFlowGroupActivatedEvent;
 import org.kie.api.event.rule.RuleFlowGroupDeactivatedEvent;
+import org.kie.api.io.KieResources;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
@@ -103,7 +106,8 @@ public class ComplianceRunnerSmokeTest {
         kSession.delete(fHandle);
         printTrace(String.format("SCORE RESULT: %s", sampleCase), executionTrace, true);
 
-        assertThat(sampleCase.getTrafficLight()).isNull();;
+        assertThat(sampleCase.getTrafficLight()).isNull();
+        ;
     }
 
     @Test
@@ -119,6 +123,16 @@ public class ComplianceRunnerSmokeTest {
 
         kSession.delete(fHandle);
         printTrace(String.format("SCORE RESULT: %s", sampleCase), executionTrace, true);
+
+    }
+
+    @Test
+    public void rulesCanBeBuiltProgrammatically() throws Exception {
+        KieServices ks = KieServices.Factory.get();
+
+        KieFileSystem kfs = ks.newKieFileSystem();
+        KieResources kieResources = ks.getResources();
+        KieDescr kieDescr = new PackageDescr("namespace1");
 
     }
 

@@ -12,14 +12,14 @@
              xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
              xmlns:tns="http://www.jboss.org/drools">
 
-  <process processType="Private" isExecutable="true" id="Sample" name="Sample Process" >
+  <process processType="Private" isExecutable="true" id="compliance_flow-master" name="compliance_flow-master" tns:packageName="com.recordsure.rules.compliance.flow" >
 
     <!-- nodes -->
     <startEvent id="_1" name="StartProcess"  isInterrupting="true"/>
     <endEvent id="_jbpm-unique-0" name="End" >
         <terminateEventDefinition />
     </endEvent>
-    <callActivity id="_jbpm-unique-1" name="Atom_Phrase" >
+    <callActivity id="_jbpm-unique-1" name="Atom_Phrase" calledElement="compliance_flow-phrase" >
       <ioSpecification>
         <inputSet>
         </inputSet>
@@ -51,7 +51,7 @@
         </outputSet>
       </ioSpecification>
     </callActivity>
-    <callActivity id="_jbpm-unique-5" name="Phrase_Triggers" >
+    <callActivity id="_jbpm-unique-5" name="Phrase_Triggers" calledElement="compliance_flow-phrase_triggers" >
       <ioSpecification>
         <inputSet>
         </inputSet>
@@ -116,7 +116,7 @@
   </process>
 
   <bpmndi:BPMNDiagram>
-    <bpmndi:BPMNPlane bpmnElement="Sample" >
+    <bpmndi:BPMNPlane bpmnElement="compliance_flow-master" >
       <bpmndi:BPMNShape bpmnElement="_1" >
         <dc:Bounds x="16" y="16" width="48" height="48" />
       </bpmndi:BPMNShape>

@@ -83,9 +83,10 @@ public class SampleCase {
 
     @Override
     public String toString() {
-        return "SampleCase [age=" + age + ", state=" + state
-                + ", riskAversion=" + riskAversion + ", trafficLight="
-                + trafficLight + ", riskRating=" + riskRating + "]";
+        return "SampleCase [id=" + id + ", age=" + age + ", state=" + state + ", riskAversion=" + riskAversion
+                + ", looseAttributes=" + looseAttributes + ", trafficLight=" + trafficLight + ", riskRating="
+                + riskRating + "]";
     }
+
 
 }

@@ -1,0 +1,19 @@
+//created on: 14-Mar-2014
+package com.recordsure.rules.compliance.flow.phrase
+
+rule "rule1"
+
+    when
+        $obj : Object ( )
+    then
+        System.out.println(String.format("Gathering compliance data for %s. [level=%s]", $obj.toString(), "Phrase")); 
+
+end
+
+rule "rule_trigger1"
+    when
+        $obj : Object ( )
+    then
+        System.out.println(String.format("Firing compliance data for %s. [level=%s]", $obj.toString(), "Phrase")); 
+
+end
