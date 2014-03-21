@@ -38,19 +38,21 @@ public class ComplianceRunnerSmokeTest {
     private static KieSession   kSession;
     private static List<String> executionTrace;
 
+    private static String drlClasspath;
+
     @BeforeClass
     public static void setUp() {
         KieServices ks = KieServices.Factory.get();
         releaseId = ks.newReleaseId("com.recordsure.rules.compliance", "compliance-flow", "0.0.1-SNAPSHOT");
         kContainer = ks.newKieContainer(releaseId);
-        enhanceRuleSetWithDrl(ks);
+        enhanceRuleSetWithDrl(ks, "com/recordsure/rules/compliance/flow/phrase/compliance_flow-phrase_rules_TEST.drl");
         kSession = kContainer.newKieSession("recordsure-compliance-flow-session");
         executionTrace = new ArrayList<>();
         kSession.addEventListener(new StreamlinedAgendaListener(executionTrace));
         kSession.insert(executionTrace);
     }
 
-    private static void enhanceRuleSetWithDrl(KieServices ks) {
+    private static void enhanceRuleSetWithDrl(KieServices ks, String drlClasspath) {
         KieResources kieResources = ks.getResources();
         InternalKieModule kieModule = (InternalKieModule) ks.getRepository()
                 .getKieModule(releaseId);
@@ -62,10 +64,10 @@ public class ComplianceRunnerSmokeTest {
         }
 
         KnowledgeBuilder kBuilder = kieModule.getKnowledgeBuilderForKieBase(kBaseModel.getName());
-        kBuilder.add(kieResources
-                .newClassPathResource("com/recordsure/rules/compliance/flow/phrase/compliance_flow-phrase_rules_TEST.drl"
-                        , ComplianceRunnerSmokeTest.class.getClassLoader())
+        kBuilder.add(kieResources.newClassPathResource(drlClasspath, ComplianceRunnerSmokeTest.class.getClassLoader())
                 , ResourceType.DRL);
+
+        //reporting errors is a manual step
         KnowledgeBuilderErrors kbErrors = kBuilder.getErrors();
 
         if (kbErrors != null && kbErrors.size() > 0) {
