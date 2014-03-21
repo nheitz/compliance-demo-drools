@@ -1,19 +1,24 @@
 //created on: 14-Mar-2014
 package com.recordsure.rules.compliance.flow.phrase
 
+import java.util.*;
+
 rule "rule1"
-
+    ruleflow-group "phrase_cv"
     when
-        $obj : Object ( )
+        $fact : String ( )
+        $execTrace : List ( )
     then
-        System.out.println(String.format("Gathering compliance data for %s. [level=%s]", $obj.toString(), "Phrase")); 
-
+        $execTrace.add(String.format("Gathering compliance data for %s. [level=%s, rule=%s]", System.identityHashCode($fact)
+            , "Phrase", drools.getRule().getId())); 
 end
 
 rule "rule_trigger1"
+    ruleflow-group "phrase_triggers"
     when
-        $obj : Object ( )
+        $fact : String ( )
+        $execTrace : List ( )
     then
-        System.out.println(String.format("Firing compliance data for %s. [level=%s]", $obj.toString(), "Phrase")); 
-
+        $execTrace.add(String.format("Firing compliance data for %s. [level=%s, rule=%s]", System.identityHashCode($fact)
+            , "Phrase", drools.getRule().getId())); 
 end

@@ -6,25 +6,28 @@
     <groupId>com.recordsure</groupId>
     <artifactId>compliance-master-pom</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../compliance-master-pom/pom.xml</relativePath>
   </parent>
 
   <artifactId>compliance-rules</artifactId>
   <packaging>kjar</packaging>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.recordsure</groupId>
+      <artifactId>compliance-rules-domain</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jbpm</groupId>
+      <artifactId>jbpm-bpmn2</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
-    <sourceDirectory>src</sourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.kie</groupId>
         <artifactId>kie-maven-plugin</artifactId>
-        <extensions>true</extensions>
-        <dependencies>
-          <dependency>
-            <groupId>com.recordsure</groupId>
-            <artifactId>compliance-rules-domain</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
     <pluginManagement>
@@ -42,7 +45,7 @@
                   <pluginExecutionFilter>
                     <groupId>org.kie</groupId>
                     <artifactId>kie-maven-plugin</artifactId>
-                    <versionRange>[6.0.1.Final,)</versionRange>
+                    <versionRange>[6.1.0.Beta1,)</versionRange>
                     <goals>
                       <goal>build</goal>
                     </goals>

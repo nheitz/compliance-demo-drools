@@ -5,6 +5,7 @@
     <groupId>com.recordsure</groupId>
     <artifactId>compliance-master-pom</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../compliance-master-pom/pom.xml</relativePath>
   </parent>
 
   <artifactId>ComplianceTesterSpike</artifactId>

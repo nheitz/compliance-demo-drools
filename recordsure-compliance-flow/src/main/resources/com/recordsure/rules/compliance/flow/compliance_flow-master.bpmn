@@ -12,7 +12,7 @@
              xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
              xmlns:tns="http://www.jboss.org/drools">
 
-  <process processType="Private" isExecutable="true" id="compliance_flow-master" name="compliance_flow-master" tns:packageName="com.recordsure.rules.compliance.flow" >
+  <process processType="Private" isExecutable="true" id="compliance_flow-master" name="Master Compliance Flow" tns:packageName="com.recordsure.rules.compliance.flow" >
 
     <!-- nodes -->
     <startEvent id="_1" name="StartProcess"  isInterrupting="true"/>
@@ -27,7 +27,7 @@
         </outputSet>
       </ioSpecification>
     </callActivity>
-    <callActivity id="_jbpm-unique-2" name="Comp_Classification" >
+    <callActivity id="_jbpm-unique-2" name="Comp_Classification" calledElement="compliance_flow-classification" >
       <ioSpecification>
         <inputSet>
         </inputSet>
@@ -35,7 +35,7 @@
         </outputSet>
       </ioSpecification>
     </callActivity>
-    <callActivity id="_jbpm-unique-3" name="Comp_ProductPack" >
+    <callActivity id="_jbpm-unique-3" name="Comp_ProductPack" calledElement="compliance_flow-classification" >
       <ioSpecification>
         <inputSet>
         </inputSet>
@@ -43,7 +43,7 @@
         </outputSet>
       </ioSpecification>
     </callActivity>
-    <callActivity id="_jbpm-unique-4" name="Comp_Organisation" >
+    <callActivity id="_jbpm-unique-4" name="Comp_Organisation" calledElement="compliance_flow-classification" >
       <ioSpecification>
         <inputSet>
         </inputSet>
@@ -59,7 +59,7 @@
         </outputSet>
       </ioSpecification>
     </callActivity>
-    <callActivity id="_jbpm-unique-6" name="Classification_Triggers" >
+    <callActivity id="_jbpm-unique-6" name="Classification_Triggers" calledElement="compliance_flow-classification_triggers" >
       <ioSpecification>
         <inputSet>
         </inputSet>
@@ -67,7 +67,7 @@
         </outputSet>
       </ioSpecification>
     </callActivity>
-    <callActivity id="_jbpm-unique-7" name="ProductPack_Triggers" >
+    <callActivity id="_jbpm-unique-7" name="ProductPack_Triggers" calledElement="compliance_flow-classification" >
       <ioSpecification>
         <inputSet>
         </inputSet>
@@ -75,7 +75,7 @@
         </outputSet>
       </ioSpecification>
     </callActivity>
-    <callActivity id="_jbpm-unique-8" name="Organisation_Triggers" >
+    <callActivity id="_jbpm-unique-8" name="Organisation_Triggers" calledElement="compliance_flow-classification" >
       <ioSpecification>
         <inputSet>
         </inputSet>
@@ -83,7 +83,7 @@
         </outputSet>
       </ioSpecification>
     </callActivity>
-    <callActivity id="_jbpm-unique-9" name="Comp_Recordsure" >
+    <callActivity id="_jbpm-unique-9" name="Comp_Recordsure" calledElement="compliance_flow-classification" >
       <ioSpecification>
         <inputSet>
         </inputSet>
@@ -91,7 +91,7 @@
         </outputSet>
       </ioSpecification>
     </callActivity>
-    <callActivity id="_jbpm-unique-10" name="RecordSure_Triggers" >
+    <callActivity id="_jbpm-unique-10" name="RecordSure_Triggers" calledElement="compliance_flow-classification" >
       <ioSpecification>
         <inputSet>
         </inputSet>

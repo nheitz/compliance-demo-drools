@@ -6,10 +6,11 @@
     <groupId>com.recordsure</groupId>
     <artifactId>compliance-master-pom</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../compliance-master-pom/pom.xml</relativePath>
   </parent>
 
+  <groupId>com.recordsure.rules.compliance</groupId>
   <artifactId>compliance-flow</artifactId>
-  <packaging>kjar</packaging>
 
   <dependencies>
     <dependency>
@@ -50,9 +51,13 @@
       <groupId>org.easytesting</groupId>
       <artifactId>fest-assert</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>13.0.1</version>
+    </dependency>
   </dependencies>
   <build>
-    <sourceDirectory>src</sourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.kie</groupId>

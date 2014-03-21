@@ -3,11 +3,13 @@ package com.recordsure.rules;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.drools.compiler.kie.builder.impl.InternalKieModule;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.api.KieServices;
 import org.kie.api.builder.ReleaseId;
+import org.kie.api.builder.model.KieBaseModel;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
 import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.event.rule.AgendaGroupPoppedEvent;
@@ -17,9 +19,14 @@ import org.kie.api.event.rule.MatchCancelledEvent;
 import org.kie.api.event.rule.MatchCreatedEvent;
 import org.kie.api.event.rule.RuleFlowGroupActivatedEvent;
 import org.kie.api.event.rule.RuleFlowGroupDeactivatedEvent;
+import org.kie.api.io.KieResources;
+import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
+import org.kie.internal.builder.KnowledgeBuilder;
+import org.kie.internal.builder.KnowledgeBuilderError;
+import org.kie.internal.builder.KnowledgeBuilderErrors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +43,39 @@ public class ComplianceRunnerSmokeTest {
         KieServices ks = KieServices.Factory.get();
         releaseId = ks.newReleaseId("com.recordsure.rules.compliance", "compliance-flow", "0.0.1-SNAPSHOT");
         kContainer = ks.newKieContainer(releaseId);
+        enhanceRuleSetWithDrl(ks);
         kSession = kContainer.newKieSession("recordsure-compliance-flow-session");
         executionTrace = new ArrayList<>();
         kSession.addEventListener(new StreamlinedAgendaListener(executionTrace));
         kSession.insert(executionTrace);
+    }
+
+    private static void enhanceRuleSetWithDrl(KieServices ks) {
+        KieResources kieResources = ks.getResources();
+        InternalKieModule kieModule = (InternalKieModule) ks.getRepository()
+                .getKieModule(releaseId);
+
+        KieBaseModel kBaseModel = null;
+        for (KieBaseModel kbModel : kieModule.getKieModuleModel().getKieBaseModels().values()) {
+            kBaseModel = kbModel;
+            break;
+        }
+
+        KnowledgeBuilder kBuilder = kieModule.getKnowledgeBuilderForKieBase(kBaseModel.getName());
+        kBuilder.add(kieResources
+                .newClassPathResource("com/recordsure/rules/compliance/flow/phrase/compliance_flow-phrase_rules_TEST.drl"
+                        , ComplianceRunnerSmokeTest.class.getClassLoader())
+                , ResourceType.DRL);
+        KnowledgeBuilderErrors kbErrors = kBuilder.getErrors();
+
+        if (kbErrors != null && kbErrors.size() > 0) {
+            for (KnowledgeBuilderError kbError : kbErrors) {
+                logger.error(kbError.toString());
+            }
+
+            throw new RuntimeException("Rules could not be built.  Please see preceding log lines.");
+        }
+
     }
 
     @AfterClass
@@ -49,14 +85,14 @@ public class ComplianceRunnerSmokeTest {
 
     @Test
     public void phraseFlowShouldFire() throws Exception {
-        Object o = new Object();
-        FactHandle fHandle = kSession.insert(o);
+        String fact = "fact";
+        FactHandle fHandle = kSession.insert(fact);
 
         kSession.startProcess("compliance_flow-master");
         kSession.fireAllRules();
 
         kSession.delete(fHandle);
-        printTrace(String.format("SCORE RESULT: %s", o), executionTrace, true);
+        printTrace(String.format("SCORE RESULT: %s", fact), executionTrace, true);
 
     }
 
@@ -73,7 +109,6 @@ public class ComplianceRunnerSmokeTest {
         if (andClear)
             executionTrace.clear();
     }
-
 
     private static class StreamlinedAgendaListener implements AgendaEventListener {
 
